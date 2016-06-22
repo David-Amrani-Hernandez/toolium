@@ -131,3 +131,15 @@ def get_page_object(created_page_objects_list, page_object_name):
             break
 
     return current_page_object
+
+
+def get_element_from_page_object(page_object, element_name):
+    """
+    Retrieves the given element from the page_object by the element name.
+    :param page_object: (PageObjectAutoLoaded) Page object
+    :param element_name: Element name following the AutoLoader rules for element names.
+    :return: PageElement
+    """
+    exec "element = page_object.element_{name}".format(name=element_name)
+    return element
+

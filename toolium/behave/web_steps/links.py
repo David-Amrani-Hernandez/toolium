@@ -22,19 +22,32 @@ from behave import step
 
 @step(u'I press "{name}" button')
 def press_button(context, name):
-
-    exec "context.page.element_{name}.click()".format(name=name)
+    """
+    Press button but no new page is loaded. e.i: To check that an error arises.
+    """
+    element = context.get_element_from_current_page(name)
+    element.click()
 
 
 @step(u'I click on "{name}" button')
 def click_button(context, name):
-
-    exec "context.page.element_{name}.click()".format(name=name)
+    """
+    Press button and a new page is loaded, but 'context.page' is not updated.
+     It needs to be updated by calling the step: 'the "{resource}" page is loaded'
+     e.i: Moving to another page.
+    """
+    element = context.get_element_from_current_page(name)
+    element.click()
 
 
 @step(u'I click "{name}" button to go to "{resource}" page')
 def click_button_and_go_to(context, name, resource):
+    """
+    Press button, a new page is loaded and 'context.page' is updated with the given resource.
+     e.i: Moving to another page.
+    """
+    element = context.get_element_from_current_page(name)
+    element.click()
 
-    exec "context.page.element_{name}.click()".format(name=name)
     context.page = context.get_page_object(resource)
     context.wait_until_loaded()

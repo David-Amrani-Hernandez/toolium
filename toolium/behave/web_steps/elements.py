@@ -23,4 +23,5 @@ from behave import step
 @step(u'the "{element}" element is displayed')
 def resource_is_visible(context, element):
 
-    exec "context.page.element_{name}.web_element.is_displayed()".format(name=element)
+    element = context.get_element_from_current_page(element)
+    element.web_element.is_displayed()

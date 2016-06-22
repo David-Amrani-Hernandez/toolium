@@ -43,6 +43,10 @@ def before_scenario(context, scenario):
     """
     bdd_common_before_scenario(context, scenario)
 
+    # Context variable to save filled values. The key is the element name.
+    # (e.g: context.filled_values['username'])
+    context.filled_values = dict()
+
 
 def page_object_autoloader_init(context_or_world):
     """
@@ -71,7 +75,11 @@ def page_object_autoloader_init(context_or_world):
         def get_page_object(page_object_name):
             return config_auto_loader.get_page_object(context_or_world.page_object_list_autoloaded, page_object_name)
 
+        def get_element_from_current_page(page_element_name):
+            return config_auto_loader.get_element_from_page_object(context_or_world.page, page_element_name)
+
         context_or_world.get_page_object = get_page_object
+        context_or_world.get_element_from_current_page = get_element_from_current_page
 
 
 def bdd_common_before_scenario(context_or_world, scenario):

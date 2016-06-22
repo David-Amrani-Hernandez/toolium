@@ -32,10 +32,12 @@ def fill_in_form_with_value(context, field, resource, value):
     context.page = context.get_page_object(resource)
     
     # Type field
-    exec "context.page.element_{field}.text = '{value}'".format(field=field, value=unicode(value))
-       
-    #Finally, variable is saved in context.'field' to check values in further steps. (e.g: context.username)
-    exec "context.{field} = 'value'".format(field=field, value=value)
+    element = context.get_element_from_current_page(field)
+    element.text = unicode(value)
+
+    #Finally, variable is saved in context.filled_values to check values in further steps.
+    # (e.g: context.filled_values['username'])
+    context.filled_values.update({field: value})
 
 
 @step(u'I fill in "{field}" field with "{value}"')
@@ -45,13 +47,16 @@ def fill_in_form_with_value(context, field, value):
     value = prepare_param(value)
     
     # Type field
-    exec "context.page.element_{field}.text = '{value}'".format(field=field, value=unicode(value))
+    element = context.get_element_from_current_page(field)
+    element.text = unicode(value)
        
-    #Finally, variable is saved in context.'field' to check values in further steps. (e.g: context.username)
-    exec "context.{field} = 'value'".format(field=field, value=value)
+    #Finally, variable is saved in context.filled_values to check values in further steps.
+    # (e.g: context.filled_values['username'])
+    context.filled_values.update({field: value})
 
 
 @step(u'I clear "{field}" input value')
 def fill_in_form_with_value(context, field):
-    
-    exec "context.page.element_{field}.clear".format(field=field)
+
+    element = context.get_element_from_current_page(field)
+    element.clear()

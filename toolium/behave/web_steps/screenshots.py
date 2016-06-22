@@ -31,8 +31,8 @@ def gui_page_after_invalid_check(context, resource):
 
     exclude_element_list = list()
     for row in context.table:
-        for cell in row:
-            exec "exclude_element_list.append(context.page.element_{name})".format(name=cell)
+        element = context.get_element_from_current_page(row['element_name'])
+        exclude_element_list.append(element)
 
     # Assert the full screen excluding some elements
     context.assert_full_screenshot('%s_partialpage' % resource, exclude_elements=exclude_element_list)
