@@ -27,12 +27,18 @@ from toolium.utils.json_configuration import load_project_properties, load_lang_
 """
 This file inits the environment for a Behave! execution, according to the following test project structure:
 
- ├─ src (acceptance test project)
+    ├─ src (vamps-acceptance)
     │    ├─ common
-    │    │   ├─ steps (common steps)
-    │    │   ├─ utils (general project utils)
-    │    │   ├─ pageelements (custom page elements)
-    │    │   └─ pageobjects (custom page obejects)
+    │    │   ├─ steps   (common steps)
+    │    │   │    ├─ my_steps.py
+    │    │   │    ├─ ...
+    │    │   ├─ environment   (common environment)
+    │    │   │    ├─ my_environment.py
+    │    │   │    ├─ ...
+    │    │   ├─ pageobjects   (custom page obejects)
+    │    │   ├─ pageelements  (custom page elements)
+    │    │   ├─ apiobjects (custom API obejects)
+    │    │   └─ utils (general project utils)
     │    ├─ features
     │    │   ├─ component
     │    │   ├─ integration
@@ -46,10 +52,10 @@ This file inits the environment for a Behave! execution, according to the follow
     │    │   └─ e2e
     │    ├─ resources
     │    │   └─ page_object_definition.yaml
-    │    ├─ conf
+    │    ├─ settings
     │    │   ├─ pre-properties.json
     │    │   ├─ int-properties.json
-    │    │   ├─ qa-properties.json (default config)
+    │    │   ├─ qa-properties.json  (default config)
     │    │   ├─ toolium.conf
     │    │   ├─ logging.conf
     │    │   └─ language
@@ -68,8 +74,8 @@ This file inits the environment for a Behave! execution, according to the follow
 
 """
 
-CONFIG_PROPERTIES_DIR = u'conf'
-CONFIG_PROPERTIES_LANG_DIR = u'conf/language'
+CONFIG_PROPERTIES_DIR = u'settings'
+CONFIG_PROPERTIES_LANG_DIR = u'settings/language'
 CONFIG_PROPERTIES_FRAMEWORK = u'toolium.conf'
 CONFIG_PROPERTIES_LOGGING = u'logging.conf'
 CONFIG_PROPERTIES_ENVIRONMENT = "{env}-properties.json"

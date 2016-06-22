@@ -32,7 +32,7 @@ def fill_in_form_with_value(context, field, resource, value):
     context.page = context.get_page_object(resource)
     
     # Type field
-    exec "context.page.element_{field}.text = u'{value}'".format(field=field, value=value)
+    exec "context.page.element_{field}.text = '{value}'".format(field=field, value=unicode(value))
        
     #Finally, variable is saved in context.'field' to check values in further steps. (e.g: context.username)
     exec "context.{field} = 'value'".format(field=field, value=value)
@@ -45,7 +45,7 @@ def fill_in_form_with_value(context, field, value):
     value = prepare_param(value)
     
     # Type field
-    exec "context.page.element_{field}.text = u'{value}'".format(field=field, value=value)
+    exec "context.page.element_{field}.text = '{value}'".format(field=field, value=unicode(value))
        
     #Finally, variable is saved in context.'field' to check values in further steps. (e.g: context.username)
     exec "context.{field} = 'value'".format(field=field, value=value)
