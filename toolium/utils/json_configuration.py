@@ -23,8 +23,8 @@ import logging
 import re
 from copy import deepcopy
 from os import listdir
-from os.path import isfile, join
-from ConfigParser import SafeConfigParser
+from os.path import isfile, isdir, join
+from yaml import load
 import codecs
 
 __logger__ = logging.getLogger(__name__)
@@ -32,8 +32,9 @@ __logger__ = logging.getLogger(__name__)
 # Loaded configuration. Module variable with all loaded properties: JSON
 config = None
 
-# Loaded language properties: ConfigParser
-language_props = None
+# Loaded language properties as Python Dict
+language_prop_list = None
+language = None  # es, en, ...
 
 
 def load_project_properties(json_file):
@@ -58,39 +59,57 @@ def load_project_properties(json_file):
     __logger__.debug("Properties loaded: %s", config)
 
 
-def load_lang_properties(lang, lang_dir):
+def load_message_properties(lang, lang_dir):
     """
-    Loads all lang properties for the files located in the given lang_dir. The files to load will be the
-     ones that match with the given language. File format to load: <lang>_*.*.
-    :param lang: (string) Language of the file to load the properties from
+    Loads all lang properties for the files located in the given lang_dir.
+    File format to load: *.yaml
+    :param lang: (string) Language property to load text messages from files.
     :param lang_dir: (string) Dir where the lang files are located
-    :return: None. The loaded lang properties will be saved in the global var of this file: language_props
+    :return: None. The loaded lang properties will be saved in the global var of this file: language_prop_list
     """
 
-    __logger__.info("Loading all language files from '%s'. Language: '%s'", lang_dir, lang)
-    if isfile(lang_dir):
+    __logger__.info("Language set to '%s'", lang)
+    __logger__.info("Loading all language files from '%s'", lang_dir)
+    if isdir(lang_dir):
         file_list = [join(lang_dir, f) for f in listdir(lang_dir) if isfile(join(lang_dir, f)) and
-                     f.startswith("{}_".format(lang))]
+                     f.endswith(".yaml")]
         __logger__.debug("Language properties file list: '%s'", file_list)
 
-        global language_props
+        global language_prop_list, language
 
-        language_props = SafeConfigParser()
+        language = lang
+        language_prop_list = dict()
         for file in file_list:
             # Open the file with the correct encoding
             with codecs.open(file, 'r', encoding='utf-8') as f:
-                language_props.readfp(f)
-        __logger__.debug("Language properties loaded for: '%s'", language_props.sections())
+                language_prop_list.update(load(f))
+        __logger__.debug("Language properties loaded for: '%s'", language_prop_list.keys())
     else:
         __logger__.warn("Dir with language property files not found.")
 
 
-def get_values_of_lang_section(section):
+def get_message_property(key_string):
+    """
+    Gets the given property as String separated by points: "home.button.send"
+    :param key_string: (string) Chain of keys to get
+    :return: Value of the given property chain in the specified language
+    """
+
+    key_list = key_string.split(".")
+    print key_list
+    language_props_copy = deepcopy(language_prop_list)
+    for key in key_list:
+        language_props_copy = language_props_copy[key]
+
+    return language_props_copy[language]
+
+
+def get_values_of_config_section(section):
     """
     Returns a list with all the values (only values without key) of the given section for the
-     loaded language properties file.
+     config properties file (for ConfigParser elements)
     :param section: (string) Name of the section.
-    :return: (list) List with all the values of the given section for the loaded language properties
+    :return: (list) List with all the values of the given section for the loaded properties file
     """
 
     value_list = list()

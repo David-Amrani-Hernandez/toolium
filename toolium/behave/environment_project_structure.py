@@ -21,7 +21,7 @@ import os
 from toolium.config_files import ConfigFiles
 from toolium.behave.environment import before_all as toolium_before_all, before_scenario as toolium_before_scenario, \
     after_scenario as toolium_after_scenario, after_all as toolium_after_all
-from toolium.utils.json_configuration import load_project_properties, load_lang_properties
+from toolium.utils.json_configuration import load_project_properties, load_message_properties, get_message_property
 
 
 """
@@ -92,6 +92,11 @@ def before_all(context):
         - context.toolium_config -> toolium.config_parser.ExtendedConfigParser
         - context.logger -> logging
         - context.config_files -> ConfigFiles
+        - context.page_object_list_autoloaded: (list) PageObjectAutoloaded list
+    Methods added to Behave's context:
+        - context.get_page_object(page_object_name): (function) to retrieve a PageObject by its name
+        - context.get_message_property(key_string): (function) to retrieve the text message in the specified language
+            from the language properties file, using a key_string like this: "home.button.login".
     :param context: behave context
     """
 
@@ -112,7 +117,8 @@ def before_all(context):
 
     # Load language properties from files.
     lang_property = context.config.userdata.get("language", "ES").lower()
-    load_lang_properties(lang_property, CONFIG_PROPERTIES_LANG_DIR)
+    load_message_properties(lang_property, CONFIG_PROPERTIES_LANG_DIR)
+    context.get_message_property = get_message_property
 
 
 def before_scenario(context, scenario):
