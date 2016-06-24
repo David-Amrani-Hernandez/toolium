@@ -19,7 +19,7 @@ limitations under the License.
 
 from behave import step
 
-from toolium.utils.json_configuration import map_param
+from toolium.utils.configuration import map_param
 from toolium.utils.dataset import prepare_param
 
 

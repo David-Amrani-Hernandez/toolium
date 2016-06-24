@@ -103,7 +103,7 @@ def get_message_property(key_string):
 
         __logger__.info("Mapping language param '%s' to its configured value '%s'", key_string, language_props_copy)
     except KeyError as e:
-        __logger__.error("Mapping chain not found in the language properties file")
+        __logger__.error("Mapping chain '%s' not found in the language properties file", key_string)
         raise e
 
     return language_props_copy[language]

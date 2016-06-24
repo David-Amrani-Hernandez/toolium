@@ -19,7 +19,7 @@ limitations under the License.
 
 from behave import step
 import time
-from toolium.utils.json_configuration import map_param
+from toolium.utils.configuration import map_param
 
 
 @step(u'I navigate to the "{url}" service url for "{resource}" web page')

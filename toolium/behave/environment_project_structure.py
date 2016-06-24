@@ -21,7 +21,7 @@ import os
 from toolium.config_files import ConfigFiles
 from toolium.behave.environment import before_all as toolium_before_all, before_scenario as toolium_before_scenario, \
     after_scenario as toolium_after_scenario, after_all as toolium_after_all
-from toolium.utils.json_configuration import load_project_properties, load_message_properties, get_message_property
+from toolium.utils.configuration import load_project_properties, load_message_properties, get_message_property
 
 
 """
