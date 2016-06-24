@@ -96,30 +96,20 @@ def get_message_property(key_string):
     """
 
     key_list = key_string.split(".")
-    print key_list
     language_props_copy = deepcopy(language_prop_list)
-    for key in key_list:
-        language_props_copy = language_props_copy[key]
+    try:
+        for key in key_list:
+            language_props_copy = language_props_copy[key]
+
+        __logger__.info("Mapping language param '%s' to its configured value '%s'", key_string, language_props_copy)
+    except KeyError as e:
+        __logger__.error("Mapping chain not found in the language properties file")
+        raise e
 
     return language_props_copy[language]
 
 
-def get_values_of_config_section(section):
-    """
-    Returns a list with all the values (only values without key) of the given section for the
-     config properties file (for ConfigParser elements)
-    :param section: (string) Name of the section.
-    :return: (list) List with all the values of the given section for the loaded properties file
-    """
-
-    value_list = list()
-    for key, value in language_props.items(section):
-        value_list.append(value)
-
-    return value_list
-
-
-def _is_property_in_config(param):
+def _is_conf_property_in_config(param):
     """
     Checks if the given param should be loaded from Environment Configuration File
     Format: [CONF:services.vamps.user]
@@ -130,7 +120,39 @@ def _is_property_in_config(param):
     return re.match("\[CONF:(.*)\]", param)
 
 
-def map_config_param(param_value, config_json=None):
+def _is_lang_property_in_config(param):
+    """
+    Checks if the given param should be loaded from Language Configuration File
+    Format: [LANG:home.button.label]
+    :param param: Parameter to check its value.
+    :return: returning a match object, or None if no match was found.
+    """
+
+    return re.match("\[LANG:(.*)\]", param)
+
+
+def map_param(param_value):
+    """
+    Analyzes the given parameter value and find out its real value into the loaded environment configuration file or
+    language configuration file.
+    :param param_value: Parameter value. If it should be replaced by its real value into configuration file, when
+    the format is something like this: [CONF:services.vamps.user] or [LANG:home.button.label].
+    :return: Real parameter value. If the param value does not suit this format,
+    the returned param value is the same as the given one.
+    """
+
+    match_group = _is_conf_property_in_config(param_value)
+    if match_group:
+        return _map_config_param(match_group.group(1))
+    else:
+        match_group = _is_lang_property_in_config(param_value)
+        if match_group:
+            return get_message_property(match_group.group(1))
+        else:
+            return param_value
+
+
+def _map_config_param(param_value, config_json=None):
     """
     Analyzes the given parameter value and find out its real value into the loaded environment configuration file.
     :param param_value: Parameter value. If it should be replaced by its real value into configuration file, when
@@ -144,25 +166,21 @@ def map_config_param(param_value, config_json=None):
           }
         }
     :param config_json: (dict) Loaded configuration file (environment properties)
-    :return: Real parameter value. In this case, the string "cyber-sec-user@11paths.com". It the param value
+    :return: Real parameter value. In this case, the string "cyber-sec-user@11paths.com". If the param value
     does not suit this format, the returned param value is the same as the given one.
     """
 
     if not config_json:
         config_json = config
 
-    match_group = _is_property_in_config(param_value)
-    if match_group:
-        properties_list = match_group.group(1).split(".")
-        aux_config_json = deepcopy(config_json)
-        try:
-            for property in properties_list:
-                aux_config_json = aux_config_json[property]
+    properties_list = param_value.split(".")
+    aux_config_json = deepcopy(config_json)
+    try:
+        for property in properties_list:
+            aux_config_json = aux_config_json[property]
 
-            __logger__.info("Mapping param '%s' to its configured value '%s'", param_value, aux_config_json)
-        except KeyError as e:
-            __logger__.error("Mapping chain not found in the configuration properties file")
-            raise e
-        return aux_config_json
-    else:
-        return param_value
+        __logger__.info("Mapping param '%s' to its configured value '%s'", param_value, aux_config_json)
+    except KeyError as e:
+        __logger__.error("Mapping chain not found in the configuration properties file")
+        raise e
+    return aux_config_json

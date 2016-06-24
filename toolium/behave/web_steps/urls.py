@@ -19,14 +19,14 @@ limitations under the License.
 
 from behave import step
 import time
-from toolium.utils.json_configuration import map_config_param
+from toolium.utils.json_configuration import map_param
 
 
 @step(u'I navigate to the "{url}" service url for "{resource}" web page')
 def navigate_to_url(context, url, resource):
 
     # Check if the value of the param is a 'config mask' and get its real value in this case and prepare dataset
-    context.url = map_config_param(url)
+    context.url = map_param(url)
 
     # Set up correct PageObject depending on the resource accessed by the user
     context.page = context.get_page_object(resource)

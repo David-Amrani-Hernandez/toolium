@@ -19,14 +19,14 @@ limitations under the License.
 
 from behave import step
 
-from toolium.utils.json_configuration import map_config_param
+from toolium.utils.json_configuration import map_param
 from toolium.utils.dataset import prepare_param
 
 
 @step(u'I fill in "{field}" field from "{resource}" page with "{value}"')
 def fill_in_form_with_value(context, field, resource, value):
     # Check if the value of the param is a 'config mask' and get its real value in this case and prepare dataset
-    value = map_config_param(value)
+    value = map_param(value)
     value = prepare_param(value)
 
     context.page = context.get_page_object(resource)
@@ -43,7 +43,7 @@ def fill_in_form_with_value(context, field, resource, value):
 @step(u'I fill in "{field}" field with "{value}"')
 def fill_in_form_with_value(context, field, value):
     # Check if the value of the param is a 'config mask' and get its real value in this case and prepare dataset
-    value = map_config_param(value)
+    value = map_param(value)
     value = prepare_param(value)
     
     # Type field
